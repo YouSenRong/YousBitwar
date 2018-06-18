@@ -1,0 +1,270 @@
+/**
+ * JJTree template file created by SF JavaCC plugin 1.5.28+ wizard for JavaCC 1.5.0+
+ */
+/**
+ * author: you
+ * date: 2018/05/01
+ */options{  static = false;}PARSER_BEGIN(YousBitWarJTree)
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.Random;
+
+public class YousBitWarJTree{  public static void main(String args [])  {    File file = new File("strategy_5.txt");
+    try
+    {
+      FileInputStream fileInputStream = new FileInputStream(file);
+	  YousBitWarJTree yousBitWarJTree = new YousBitWarJTree(fileInputStream);
+      SimpleNode n = yousBitWarJTree.program();
+      n.dump("");
+	}
+	catch (Exception e)
+	{
+	  System.out.println("NOK.");
+	  System.out.println(e.getMessage());
+	}
+	catch (Error e)
+	{
+	  System.out.println("Oops.");
+	  System.out.println(e.getMessage());
+	}  }}PARSER_END(YousBitWarJTree)SKIP :{  " "| "\t"| "\n"| "\r"| < "//" (~[ "\n", "\r" ])*    (      "\n"    | "\r"    | "\r\n"    ) >| < "/*" (~[ "*" ])* "*"    (      ~[ "/" ] (~[ "*" ])* "*"    )*    "/" >}
+
+TOKEN : /* RESERVED WORDS AND LITERALS */
+{
+  < STRATEGY: "Strategy" >
+| < INT: "int" >
+| < IF: "if" >
+| < ELSEIF: "elseif" >
+| < ELSE: "else" >
+| < WHILE: "while" >
+| < RETURN: "return" >
+| < RANDOM: "Random" >
+| < CURRENT: "Current" >
+| < ENERMY: "Enermy" >
+| < END: "END" >
+}
+
+TOKEN : /* OPERATORS */
+{
+  < ASSIGN: "=" >
+| < LT: "<" >
+| < LE: "<=" >
+| < EQ: "==" >
+| < GE: ">=" >
+| < GT: ">" >
+| < NE: "!=" >
+| < SC_OR: "||" >
+| < SC_AND: "&&" >
+| < PLUS : "+" >
+| < MINUS : "-" >
+| < MULTIPLY : "*" >
+| < DIVIDE : "/" >
+}
+
+TOKEN : /* SEPARATORS */
+{
+  < LPAREN: "(" >
+| < RPAREN: ")" >
+| < LBRACE: "{" >
+| < RBRACE: "}" >
+| < LBRACKET: "[" >
+| < RBRACKET: "]" >
+| < SEMICOLON: ";" >
+| < COMMA: "," >
+| < DOT: "." >
+}TOKEN :
+{
+  < ID: (< LETTER > | "_")(< LETTER > | "_" | < DIGIT >)* >
+| < CONSTANT : (< DIGIT >)+ >
+| < #DIGIT: [ "0"-"9" ] >
+| < #LETTER: ["a"-"z", "A"-"Z"] >
+}
+//program -> function_declarationSimpleNode program() :{}{  function_statement()  {    return jjtThis;  }}//function_declaration -> <STRATEGY> <ID> statement_block
+void function_statement():
+{
+}
+{
+  < STRATEGY > < ID > statement_block()
+}//statement_block -> "{ " statement_list "}"
+void statement_block():
+{
+}
+{
+  < LBRACE >
+  statement_list()
+  < RBRACE >
+  [<END >]
+}
+
+//statement_list -> (statement)*
+void statement_list():
+{
+}
+{
+  (
+    statement()
+  )*
+}//statement -> variable_declaration | assign_statement | if_statement | while_statement | return_statement | statement_block
+void statement():
+{
+}
+{
+  variable_declaration()
+| assign_statement()
+| if_statement()
+| while_statement()
+| return_statement()
+| statement_block()
+}
+
+//variable_declaration -> INT ID (, ID)* ;
+void variable_declaration():
+{
+}
+{
+  < INT > <ID >
+  (
+    < COMMA > <ID >
+  )*
+  < SEMICOLON >
+}
+
+
+//assign_statement -> ID "=" expression ";"
+void assign_statement():
+{
+}
+{
+  < ID >
+  < ASSIGN >
+  expression()
+  < SEMICOLON >
+}
+
+//if_statement -> "if" "(" expression ")" [statement_block]
+void if_statement():
+{
+  int temp_value = 0;
+  int temp_brace_num = 0;
+}
+{
+  < IF >
+  < LPAREN >
+  expression()
+  < RPAREN >
+  statement_block()
+  (
+    < ELSEIF > < LPAREN > expression() < RPAREN >
+    statement_block()
+  )*
+  
+  [
+   < ELSE >
+   statement_block()
+  ]
+}
+
+
+//while_statement -> "while" "(" expression ")" statement_block
+void while_statement():
+{
+}
+{
+  < WHILE > <LPAREN > expression() < RPAREN >
+  [statement_block()]
+}
+
+//return_statement -> "return" expression;
+void return_statement():
+{
+}
+{
+  < RETURN >
+  expression()
+  < SEMICOLON >
+  [< END >]
+}
+
+//expression -> logic_expression | <RANDOM> "(" <CONSTANT> ")" | ";"
+void expression():
+{
+}
+{
+  logic_expression()
+| < RANDOM >
+  < LPAREN >
+  < CONSTANT >
+  < RPAREN >
+}
+
+//logic_expression -> relational_expression( ("||" | "&&") relational_expression)*
+void logic_expression():
+{
+  int temp_value = 0;
+  int value = 0;
+}
+{
+  relation_expression()
+  (
+    ( < SC_OR > relation_expression()
+    | < SC_AND > relation_expression()
+    )
+  )*
+}
+
+//relational_expression -> addictive_expression( ("<" | "<=" | "==" | ">=" | ">" | "!=") addictive_expression)*
+void relation_expression():
+{
+}
+{
+  addictive_expression()
+  (
+    (
+      < LT > addictive_expression()
+    | < LE > addictive_expression()
+    | < EQ > addictive_expression()
+    | < GE > addictive_expression()
+    | < GT > addictive_expression()
+    | < NE > addictive_expression()
+    )
+  )*
+}
+
+//addictive_expression -> multiplicative_expression( ("+" | "-") multiplicative_expression)*
+void addictive_expression():
+{
+}
+{
+  multiplicative_expression()
+  (
+    (
+      < PLUS > multiplicative_expression()
+    | < MINUS > multiplicative_expression()
+  	)
+  )*
+}
+
+//multiplicative_expression -> factor( ("*" | "/") factor)*
+void multiplicative_expression():
+{
+}
+{
+  factor()
+  (
+    (
+      < MULTIPLY > factor()
+    | < DIVIDE > factor()
+    )
+  )*
+}
+
+//factor -> "(" expression ")" | <ID> | <ID> "[" <CONSTANT> "]" | <CONSTANT>
+void factor():
+{
+}
+{
+  < LPAREN > expression() < RPAREN >
+| < CURRENT >
+| < ENERMY > < LBRACKET > expression() < RBRACKET >
+| < ID >
+| < CONSTANT >
+}

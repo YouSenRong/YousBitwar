@@ -1,0 +1,21 @@
+Strategy strategy_4
+{
+	int i;
+	if(Current == 1)
+	{
+		return 1;
+	}
+	else
+	{
+		i = Random(9);
+		if(i == 8)
+		{
+			return 0;
+		}
+		else
+		{
+			return Enermy[Current - 1];
+		}
+	}
+	END
+}

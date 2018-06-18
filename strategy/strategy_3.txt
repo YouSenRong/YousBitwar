@@ -1,0 +1,12 @@
+Strategy strategy_3
+{
+	if(Current == 1)
+	{
+		return 1;
+	}
+	else
+	{
+		return Enermy[Current-1];
+	}
+	END
+}
